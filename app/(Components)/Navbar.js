@@ -78,7 +78,7 @@ const Navbar = () => {
             {menuItems.map((item) => (
               <Link key={item.href} href={item.href} className="text-sm font-semibold hover:text-primary">
                 {item.label}
-              </Link>
+            </Link>
             ))}
             <ThemeToggler />
             <Button size="icon" variant="ghost">
