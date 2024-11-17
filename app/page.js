@@ -3,6 +3,7 @@ import Hero from './(Components)/Hero'
 import Slogan from './(Components)/Slogan'
 import ServiceCards from './(Components)/ServiceCards'
 import Industries from './(Components)/Industries'
+import Infrastructure from './(Components)/Infrastructure'
 
 const page = () => {
   return (
@@ -11,6 +12,8 @@ const page = () => {
       <Slogan />
       <ServiceCards />
       <Industries />
+      <Infrastructure />
+   
 
 
 
