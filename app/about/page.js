@@ -22,14 +22,14 @@ export default function AboutUs() {
   return (
     <div className="min-h-screen  ">
         <main>
-        <section className="relative h-screen flex items-center justify-center text-white overflow-hidden shadow-blue-500 shadow-lg rounded-lg">
+        <section className="relative h-[75vh] flex items-center justify-center text-white overflow-hidden shadow-blue-500 shadow-lg rounded-lg">
           <div className="absolute inset-0 z-0">
             <Image
               src="/ai.webp"
               alt="Cybersecurity Background"
               layout="fill"
               objectFit="cover"
-              className="rounded-xl"
+              className="rounded-xl opacity-100 invert-0 dark:opacity-70"
             />
           </div>
           <motion.div

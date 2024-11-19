@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import React, { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation' // Import usePathname
 import { MapPin, Phone, Search, X, Linkedin, Youtube, ShieldCheck, Menu, XIcon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -11,6 +12,7 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const pathname = usePathname() // Get current pathname
 
   useEffect(() => {
     setIsMounted(true)
@@ -26,11 +28,11 @@ const Navbar = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
 
   const menuItems = [
-    { href: "/services", label: "Services" },
-    { href: "/industries", label: "Industries" },
-    { href: "/blog", label: "Blog" },
-    { href: "/about", label: "About Us" },
-    { href: "/contact", label: "Contact Us" },
+    { href: '/services', label: 'Services' },
+    { href: '/carrier', label: 'Carrier' },
+    { href: '/blog', label: 'Blog' },
+    { href: '/about', label: 'About Us' },
+    { href: '/contact', label: 'Contact Us' },
   ]
 
   if (!isMounted) {
@@ -84,10 +86,14 @@ const Navbar = () => {
             </Link>
             <nav className="hidden md:flex items-center gap-6">
               {menuItems.map((item) => (
-                <Link 
-                  key={item.href} 
-                  href={item.href} 
-                  className="text-sm font-semibold hover:text-primary transition-colors"
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`text-sm font-semibold transition-colors ${
+                    pathname === item.href
+                      ? 'text-primary' // Highlight current path with text color only
+                      : 'hover:text-primary'
+                  }`}
                 >
                   {item.label}
                 </Link>
@@ -97,10 +103,10 @@ const Navbar = () => {
                 <Search className="h-4 w-4" />
               </Button>
             </nav>
-            <Button 
-              className="md:hidden" 
-              size="icon" 
-              variant="ghost" 
+            <Button
+              className="md:hidden"
+              size="icon"
+              variant="ghost"
               onClick={toggleMenu}
               aria-expanded={isMenuOpen}
               aria-label="Toggle menu"
@@ -126,7 +132,11 @@ const Navbar = () => {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className="text-sm font-semibold hover:text-primary transition-colors"
+                      className={`text-sm font-semibold transition-colors ${
+                        pathname === item.href
+                          ? 'text-primary' // Highlight current path with text color only
+                          : 'hover:text-primary'
+                      }`}
                       onClick={toggleMenu}
                     >
                       {item.label}
