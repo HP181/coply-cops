@@ -133,11 +133,11 @@ const Carrier = () => {
         <Card>
           <CardHeader>
             <CardTitle>Submit Your Application</CardTitle>
-            <CardDescription>We're excited to learn more about you!</CardDescription>
+            <CardDescription>We&apos;re excited to learn more about you!</CardDescription>
           </CardHeader>
           <CardContent>
             {submitted ? (
-              <p className="text-center text-green-600">Thank you for your application! We'll be in touch soon.</p>
+              <p className="text-center text-green-600">Thank you for your application! We&apos;ll be in touch soon.</p>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
