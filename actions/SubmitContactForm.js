@@ -16,7 +16,6 @@ const formSchema = z.object({
   companySize: z.string().optional(),
   services: z.array(z.string()).min(1, "At least one service must be selected"),
   budgetRange: z.string().min(1, "Budget range is required"),
-  startDate: z.string().min(1, "Start date is required"),
   isFirstPentest: z.boolean(),
   message: z.string().optional(),
   subscribe: z.boolean(),

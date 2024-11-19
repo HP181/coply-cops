@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Shield, Users, Zap } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -28,7 +27,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Toast } from "@/components/ui/toast";
 import JobOpenings from "@/lib/JobOpenings";
 import SubmitCareerForm from "@/actions/SubmitCareerForm";
 import toast from "react-hot-toast";
@@ -37,7 +35,7 @@ const Careers = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    position: "", // Make sure position is part of formData
+    position: "",
     experience: "",
     message: "",
   });
@@ -48,22 +46,21 @@ const Careers = () => {
 
   const validate = () => {
     const errors = {};
-
+  
     // Validate Full Name
     if (!formData.name.trim()) errors.name = "Full Name is required";
-
+  
     // Validate Email
     if (!formData.email.trim()) {
       errors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       errors.email = "Invalid email format";
     }
-
+  
     // Validate Position
-    if (!formData.position)
-      errors.position = "Position of Interest is required";
-
-    // Validate Experience
+    if (!formData.position) errors.position = "Position of Interest is required";
+  
+    // Validate Experience (must be a positive number)
     if (!formData.experience) {
       errors.experience = "Years of Experience is required";
     } else if (
@@ -73,7 +70,7 @@ const Careers = () => {
     ) {
       errors.experience = "Experience must be a number between 0 and 50";
     }
-
+  
     // Validate Message
     if (!formData.message.trim()) {
       errors.message = "This field is required";
@@ -82,10 +79,11 @@ const Careers = () => {
     } else if (formData.message.length > 1000) {
       errors.message = "Message must not exceed 1000 characters";
     }
-
+  
     setErrors(errors);
     return Object.keys(errors).length === 0;
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -227,18 +225,19 @@ const Careers = () => {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="experience">Years of Experience</Label>
-                  <Input
-                    id="experience"
-                    name="experience"
-                    type="number"
-                    value={formData.experience}
-                    onChange={handleChange}
-                  />
-                  {errors.experience && (
-                    <p className="text-red-500 text-sm">{errors.experience}</p>
-                  )}
-                </div>
+  <Label htmlFor="experience">Years of Experience</Label>
+  <Input
+    id="experience"
+    name="experience"
+    type="number"
+    value={formData.experience}
+    onChange={handleChange}
+    min="0" // Ensure experience is a positive number
+  />
+  {errors.experience && (
+    <p className="text-red-500 text-sm">{errors.experience}</p>
+  )}
+</div>
                 <div className="space-y-2">
                   <Label htmlFor="message">
                     Why do you want to join our team?

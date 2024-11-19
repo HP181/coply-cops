@@ -1,7 +1,5 @@
 "use client";
-
 import { useState } from "react";
-import { format, parseISO } from "date-fns";
 import { motion } from "framer-motion";
 import SubmitContactForm from "@/actions/SubmitContactForm";
 import { Input } from "@/components/ui/input";
@@ -16,12 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import toast from "react-hot-toast";
 
 export default function ContactForm() {
@@ -34,16 +26,12 @@ export default function ContactForm() {
     companySize: "",
     services: [],
     budgetRange: "",
-    startDate: "",
     isFirstPentest: false,
     message: "",
     subscribe: false,
   });
 
   const [Loading, setLoading] = useState(false);
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
 
   const [errors, setErrors] = useState({});
 
@@ -85,7 +73,6 @@ export default function ContactForm() {
       errors.services = "At least one service must be selected";
     }
     if (!formData.budgetRange) errors.budgetRange = "Budget range is required";
-    if (!formData.startDate) errors.startDate = "Start date is required";
 
     setErrors(errors);
     return Object.keys(errors).length === 0;
@@ -93,7 +80,9 @@ export default function ContactForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+
+
+    if (!validate()) return alert("ewh");
 
     try {
       setLoading(true);
@@ -109,7 +98,6 @@ export default function ContactForm() {
           companySize: "",
           services: [],
           budgetRange: "",
-          startDate: "",
           isFirstPentest: false,
           message: "",
           subscribe: false,
@@ -283,45 +271,6 @@ export default function ContactForm() {
           </Select>
           {errors.budgetRange && (
             <p className="text-red-500 text-sm">{errors.budgetRange}</p>
-          )}
-        </div>
-        <div>
-          <Label htmlFor="startDate">Start date*</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                id="startDate"
-                className={`w-full justify-start text-left ${
-                  errors.startDate ? "border-red-500" : ""
-                }`}
-              >
-                {formData.startDate
-                  ? format(parseISO(formData.startDate), "dd/MM/yyyy")
-                  : "Pick a date"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="p-0">
-              <Calendar
-                mode="single"
-                selected={
-                  formData.startDate ? parseISO(formData.startDate) : undefined
-                }
-                onSelect={(date) => {
-                  if (date) {
-                    const formattedDate = date.toISOString().split("T")[0];
-                    setFormData((prev) => ({
-                      ...prev,
-                      startDate: formattedDate,
-                    }));
-                  }
-                }}
-                disabled={(date) => date < today}
-              />
-            </PopoverContent>
-          </Popover>
-          {errors.startDate && (
-            <p className="text-red-500 text-sm">{errors.startDate}</p>
           )}
         </div>
         <div className="flex items-center space-x-2">
