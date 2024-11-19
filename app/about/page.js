@@ -20,29 +20,16 @@ export default function AboutUs() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <header className="bg-white dark:bg-gray-800 shadow-md">
-        <nav className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">CyberShield</div>
-            <div className="hidden md:flex space-x-4">
-              <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400">Home</a>
-              <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400">Services</a>
-              <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400">Contact</a>
-            </div>
-          </div>
-        </nav>
-      </header>
-
-      <main>
-        <section className="relative h-screen flex items-center justify-center bg-gray-900 text-white overflow-hidden">
+    <div className="min-h-screen  ">
+        <main>
+        <section className="relative h-screen flex items-center justify-center text-white overflow-hidden shadow-blue-500 shadow-lg rounded-lg">
           <div className="absolute inset-0 z-0">
             <Image
-              src="/placeholder.svg?height=1080&width=1920"
+              src="/ai.webp"
               alt="Cybersecurity Background"
               layout="fill"
               objectFit="cover"
-              className="opacity-30"
+              className="rounded-xl"
             />
           </div>
           <motion.div
@@ -51,7 +38,7 @@ export default function AboutUs() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
           >
-            <h1 className="text-5xl md:text-7xl font-bold mb-4">Securing Your Digital Future</h1>
+            <h1 className="text-5xl md:text-6xl font-bold mb-4">Securing Your Digital Future</h1>
             <p className="text-xl md:text-2xl mb-8">CyberShield: Your Trusted Cybersecurity Partner</p>
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -65,7 +52,7 @@ export default function AboutUs() {
           </motion.div>
         </section>
 
-        <section id="mission" className="py-20 bg-white dark:bg-gray-800">
+        <section id="mission" className="py-20">
           <div className="container mx-auto px-6">
             <motion.div
               className="text-center"
@@ -82,7 +69,7 @@ export default function AboutUs() {
           </div>
         </section>
 
-        <section className="py-20 bg-gray-100 dark:bg-gray-900">
+        <section className="py-20">
           <div className="container mx-auto px-6">
             <h2 className="text-3xl font-bold text-center mb-12">Why Choose CyberShield?</h2>
             <motion.div
@@ -100,7 +87,7 @@ export default function AboutUs() {
               ].map((feature, index) => (
                 <motion.div
                   key={index}
-                  className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"
+                  className=" p-6 rounded-lg shadow-lg"
                   variants={fadeInUp}
                 >
                   <feature.icon className="w-12 h-12 text-blue-600 dark:text-blue-400 mb-4" />
@@ -112,7 +99,7 @@ export default function AboutUs() {
           </div>
         </section>
 
-        <section className="py-20 bg-white dark:bg-gray-800">
+        <section className="py-20 ">
           <div className="container mx-auto px-6">
             <h2 className="text-3xl font-bold text-center mb-12">Our Team</h2>
             <motion.div
@@ -149,12 +136,6 @@ export default function AboutUs() {
           </div>
         </section>
       </main>
-
-      <footer className="bg-gray-900 text-white py-8">
-        <div className="container mx-auto px-6 text-center">
-          <p>&copy; 2024 CyberShield. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   )
 }

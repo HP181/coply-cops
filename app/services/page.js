@@ -12,7 +12,7 @@ const Page = () => {
         <h2 className="text-4xl md:text-5xl font-bold text-white mb-12 md:mb-16">
           Services
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-8">
           {[0, 4, 7].map((start, colIndex) => (
             <div key={colIndex} className="space-y-6">
               {Services.slice(start, start + (colIndex === 0 ? 4 : 3)).map((service, index) => {
