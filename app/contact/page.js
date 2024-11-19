@@ -1,8 +1,28 @@
 "use client";
 
 import { useState } from "react";
+import { format, parseISO } from "date-fns";
 import { motion } from "framer-motion";
 import SubmitContactForm from "@/actions/SubmitContactForm";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import toast from "react-hot-toast";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -10,8 +30,6 @@ export default function ContactForm() {
     lastName: "",
     email: "",
     phone: "",
-    jobTitle: "",
-    jobRole: "",
     companyName: "",
     companySize: "",
     services: [],
@@ -22,21 +40,32 @@ export default function ContactForm() {
     subscribe: false,
   });
 
-  const today = new Date().toISOString().split("T")[0];
+  const [Loading, setLoading] = useState(false);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: type === "checkbox" ? checked : value,
-    });
+    }));
+  };
+
+  const handleCheckboxChange = (service) => {
+    setFormData((prev) => ({
+      ...prev,
+      services: prev.services.includes(service)
+        ? prev.services.filter((s) => s !== service)
+        : [...prev.services, service],
+    }));
   };
 
   const validate = () => {
     const errors = {};
-
     if (!formData.firstName.trim()) errors.firstName = "First name is required";
     if (!formData.lastName.trim()) errors.lastName = "Last name is required";
     if (!formData.email.trim()) {
@@ -49,6 +78,12 @@ export default function ContactForm() {
     } else if (!/^\d{10}$/.test(formData.phone)) {
       errors.phone = "Phone number must be 10 digits";
     }
+    if (!formData.companyName.trim()) {
+      errors.companyName = "Company name is required";
+    }
+    if (formData.services.length === 0) {
+      errors.services = "At least one service must be selected";
+    }
     if (!formData.budgetRange) errors.budgetRange = "Budget range is required";
     if (!formData.startDate) errors.startDate = "Start date is required";
 
@@ -56,30 +91,20 @@ export default function ContactForm() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleCheckboxChange = (service) => {
-    setFormData((prev) => ({
-      ...prev,
-      services: prev.services.includes(service)
-        ? prev.services.filter((s) => s !== service)
-        : [...prev.services, service],
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
     try {
+      setLoading(true);
       const result = await SubmitContactForm(formData);
+
       if (result.success) {
-        alert("Form submitted successfully!");
         setFormData({
           firstName: "",
           lastName: "",
           email: "",
           phone: "",
-          jobTitle: "",
-          jobRole: "",
           companyName: "",
           companySize: "",
           services: [],
@@ -90,12 +115,15 @@ export default function ContactForm() {
           subscribe: false,
         });
         setErrors({});
+        setLoading(false);
+        return toast.success(result?.message);
       } else {
-        alert("Failed to submit the form.");
+        setLoading(false);
+        return toast.success(result?.error);
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("An error occurred. Please try again later.");
+      setLoading(false);
+      return toast.success(error);
     }
   };
 
@@ -115,35 +143,34 @@ export default function ContactForm() {
         transition={{ duration: 0.6, delay: 0.2 }}
         className="text-center mb-8"
       >
-        What sets us apart is our passionate team of highly trained, proactive ethical hackers. Our advanced capabilities go beyond industry standards.
+        What sets us apart is our passionate team of highly trained, proactive
+        ethical hackers. Our advanced capabilities go beyond industry standards.
       </motion.p>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <input
+            <Label htmlFor="firstName">First name*</Label>
+            <Input
               type="text"
+              id="firstName"
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
               placeholder="First name*"
-              className={`border p-3 rounded w-full ${
-                errors.firstName ? "border-red-500" : "border-gray-300"
-              }`}
             />
             {errors.firstName && (
               <p className="text-red-500 text-sm">{errors.firstName}</p>
             )}
           </div>
           <div>
-            <input
+            <Label htmlFor="lastName">Last name*</Label>
+            <Input
               type="text"
+              id="lastName"
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
               placeholder="Last name*"
-              className={`border p-3 rounded w-full ${
-                errors.lastName ? "border-red-500" : "border-gray-300"
-              }`}
             />
             {errors.lastName && (
               <p className="text-red-500 text-sm">{errors.lastName}</p>
@@ -152,155 +179,190 @@ export default function ContactForm() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <input
+            <Label htmlFor="email">Email*</Label>
+            <Input
               type="email"
+              id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="Email*"
-              className={`border p-3 rounded w-full ${
-                errors.email ? "border-red-500" : "border-gray-300"
-              }`}
             />
             {errors.email && (
               <p className="text-red-500 text-sm">{errors.email}</p>
             )}
           </div>
           <div>
-            <input
-              type="text"
+            <Label htmlFor="phone">Phone number*</Label>
+            <Input
+              type="tel"
+              id="phone"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
               placeholder="Phone number*"
-              className={`border p-3 rounded w-full ${
-                errors.phone ? "border-red-500" : "border-gray-300"
-              }`}
             />
             {errors.phone && (
               <p className="text-red-500 text-sm">{errors.phone}</p>
             )}
           </div>
         </div>
-        <input
-          type="text"
-          name="jobTitle"
-          value={formData.jobTitle}
-          onChange={handleChange}
-          placeholder="Job title"
-          className="border border-gray-300 p-3 rounded w-full"
-        />
-        <select
-          name="jobRole"
-          value={formData.jobRole}
-          onChange={handleChange}
-          className="border border-gray-300 p-3 rounded w-full"
-        >
-          <option value="">Job role</option>
-          <option value="Manager">Manager</option>
-          <option value="Developer">Developer</option>
-          <option value="Other">Other</option>
-        </select>
-        <input
-          type="text"
-          name="companyName"
-          value={formData.companyName}
-          onChange={handleChange}
-          placeholder="Company name"
-          className="border border-gray-300 p-3 rounded w-full"
-        />
-        <select
-          name="companySize"
-          value={formData.companySize}
-          onChange={handleChange}
-          className="border border-gray-300 p-3 rounded w-full"
-        >
-          <option value="">Company size</option>
-          <option value="1-10">1-10</option>
-          <option value="11-50">11-50</option>
-          <option value="51-200">51-200</option>
-        </select>
         <div>
-          <h3>Service(s) needed</h3>
-          {[
-            "Infrastructure Penetration Testing",
-            "Application Penetration Testing",
-            "Cloud Penetration Testing",
-          ].map((service) => (
-            <label key={service} className="block">
-              <input
-                type="checkbox"
-                name="services"
-                checked={formData.services.includes(service)}
-                onChange={() => handleCheckboxChange(service)}
-              />{" "}
-              {service}
-            </label>
-          ))}
+          <Label htmlFor="companyName">Company name</Label>
+          <Input
+            type="text"
+            id="companyName"
+            name="companyName"
+            value={formData.companyName}
+            onChange={handleChange}
+            placeholder="Company name"
+          />
+          {errors.companyName && (
+            <p className="text-red-500 text-sm">{errors.companyName}</p>
+          )}
         </div>
         <div>
-          <select
-            name="budgetRange"
-            value={formData.budgetRange}
-            onChange={handleChange}
-            className={`border p-3 rounded w-full ${
-              errors.budgetRange ? "border-red-500" : "border-gray-300"
-            }`}
+          <Label>Company size</Label>
+          <Select
+            onValueChange={(value) =>
+              setFormData((prev) => ({ ...prev, companySize: value }))
+            }
           >
-            <option value="">Budget Range*</option>
-            <option value="$1,000-$5,000">$1,000-$5,000</option>
-            <option value="$5,000-$10,000">$5,000-$10,000</option>
-          </select>
+            <SelectTrigger>
+              <SelectValue placeholder="Select company size" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1-10">1-10</SelectItem>
+              <SelectItem value="11-50">11-50</SelectItem>
+              <SelectItem value="51-200">51-200</SelectItem>
+              <SelectItem value="201-500">201-500</SelectItem>
+              <SelectItem value="501+">501+</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Service(s) needed</Label>
+          <div className="space-y-5 mt-2">
+            {[
+              "Infrastructure Penetration Testing",
+              "Application Penetration Testing",
+              "Cloud Penetration Testing",
+              "Mobile Application Penetration Testing",
+              "IoT Penetration Testing",
+            ].map((service) => (
+              <div key={service} className="flex items-center space-x-2">
+                <Checkbox
+                  id={service}
+                  checked={formData.services.includes(service)}
+                  onCheckedChange={() => handleCheckboxChange(service)}
+                />
+                <Label htmlFor={service}>{service}</Label>
+              </div>
+            ))}
+          </div>
+          {errors.services && (
+            <p className="text-red-500 text-sm">{errors.services}</p>
+          )}
+        </div>
+        <div>
+          <Label htmlFor="budgetRange">Budget range*</Label>
+          <Select
+            onValueChange={(value) =>
+              setFormData((prev) => ({ ...prev, budgetRange: value }))
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select budget range" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="$1,000-$5,000">$1,000-$5,000</SelectItem>
+              <SelectItem value="$5,000-$10,000">$5,000-$10,000</SelectItem>
+              <SelectItem value="$10,000-$20,000">$10,000-$20,000</SelectItem>
+              <SelectItem value="$20,000+">$20,000+</SelectItem>
+            </SelectContent>
+          </Select>
           {errors.budgetRange && (
             <p className="text-red-500 text-sm">{errors.budgetRange}</p>
           )}
         </div>
         <div>
-          <input
-            type="date"
-            name="startDate"
-            min={today}
-            value={formData.startDate}
-            onChange={handleChange}
-            className={`border p-3 rounded w-full ${
-              errors.startDate ? "border-red-500" : "border-gray-300"
-            }`}
-          />
+          <Label htmlFor="startDate">Start date*</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                id="startDate"
+                className={`w-full justify-start text-left ${
+                  errors.startDate ? "border-red-500" : ""
+                }`}
+              >
+                {formData.startDate
+                  ? format(parseISO(formData.startDate), "dd/MM/yyyy")
+                  : "Pick a date"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="p-0">
+              <Calendar
+                mode="single"
+                selected={
+                  formData.startDate ? parseISO(formData.startDate) : undefined
+                }
+                onSelect={(date) => {
+                  if (date) {
+                    const formattedDate = date.toISOString().split("T")[0];
+                    setFormData((prev) => ({
+                      ...prev,
+                      startDate: formattedDate,
+                    }));
+                  }
+                }}
+                disabled={(date) => date < today}
+              />
+            </PopoverContent>
+          </Popover>
           {errors.startDate && (
             <p className="text-red-500 text-sm">{errors.startDate}</p>
           )}
         </div>
-        <label>
-          <input
-            type="checkbox"
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="isFirstPentest"
             name="isFirstPentest"
             checked={formData.isFirstPentest}
+            onCheckedChange={(checked) =>
+              setFormData((prev) => ({ ...prev, isFirstPentest: checked }))
+            }
+          />
+          <Label htmlFor="isFirstPentest">
+            Is this your first penetration test?
+          </Label>
+        </div>
+        <div>
+          <Label htmlFor="message">Message</Label>
+          <Textarea
+            id="message"
+            name="message"
+            value={formData.message}
             onChange={handleChange}
-          />{" "}
-          Is this your first pentest?
-        </label>
-        <textarea
-          name="message"
-          value={formData.message}
-          onChange={handleChange}
-          placeholder="Message"
-          className="border border-gray-300 p-3 rounded w-full"
-        />
-        <label>
-          <input
-            type="checkbox"
+            placeholder="Message"
+          />
+        </div>
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="subscribe"
             name="subscribe"
             checked={formData.subscribe}
-            onChange={handleChange}
-          />{" "}
-          Subscribe to our newsletter
-        </label>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-6 py-3 rounded w-full"
-        >
-          Submit
-        </button>
+            onCheckedChange={(checked) =>
+              setFormData((prev) => ({ ...prev, subscribe: checked }))
+            }
+          />
+          <Label htmlFor="subscribe">Subscribe to newsletter</Label>
+        </div>
+        <div className="flex justify-center items-center">
+          <Button type="submit" className="h-12 px-12" disabled={Loading}>
+            Submit
+          </Button>
+        </div>
       </form>
     </div>
   );

@@ -29,9 +29,9 @@ const Navbar = () => {
 
   const menuItems = [
     { href: '/services', label: 'Services' },
-    { href: '/carrier', label: 'Carrier' },
     { href: '/blog', label: 'Blog' },
     { href: '/about', label: 'About Us' },
+    { href: '/careers', label: 'Careers' },
     { href: '/contact', label: 'Contact Us' },
   ]
 

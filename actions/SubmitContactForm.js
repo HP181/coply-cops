@@ -12,8 +12,6 @@ const formSchema = z.object({
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
   phone: z.string().regex(/^\d{10}$/, "Phone number must be 10 digits"),
-  jobTitle: z.string().optional(),
-  jobRole: z.string().optional(),
   companyName: z.string().min(1, "Company name is required"),
   companySize: z.string().optional(),
   services: z.array(z.string()).min(1, "At least one service must be selected"),
@@ -69,7 +67,7 @@ async function SubmitContactForm(formData) {
     console.error("Error processing form submission:", error);
     return {
       success: false,
-      message: "An error occurred while processing your request",
+      error: "An error occurred while processing your request",
     };
   }
 }
